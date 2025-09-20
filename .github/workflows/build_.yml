@@ -1,0 +1,31 @@
+name: Java CI (compile)
+
+on:
+  push:
+    branches: [ main, 'feature/*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Compile Java sources
+        run: |
+          # try to compile all .java files under src
+          find . -name "*.java" > /tmp/javafiles || true
+          if [ -s /tmp/javafiles ]; then
+            javac -d out $(cat /tmp/javafiles)
+            echo "Compilation succeeded"
+          else
+            echo "No Java sources found"
+          fi
